@@ -28,8 +28,9 @@ module.exports = function (app) {
           delete_password: false,
           reported: false
         }
-        collection.find({}, {fields: projection, sort: {}).toArray((err,data) =>{
+        collection.find({}, {limit: 10, fields: projection, sort: {bumped_on:1}}).toArray((err,data) =>{
           console.log(err, data)
+          //likely want a data.forEach loop to modify length of replies array in place. Weird requirement
           res.json(data)
         })
       })
@@ -75,6 +76,7 @@ module.exports = function (app) {
     })
 
     .post(function (req, res){
+    //Sort the array by date on write in
 
     })
 
