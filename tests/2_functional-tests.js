@@ -28,8 +28,7 @@ suite('Functional Tests', function() {
           })
           .end(function(err, res){
             assert.equal(res.status, 200);
-            console.log(res.redirects)
-            assert.equal(res.redirects[0][-7:-1], '/b/test')
+            assert.equal(res.redirects[0].substring(res.redirects[0].length -7), '/b/test')
             done();
           });
       })

@@ -20,6 +20,21 @@ module.exports = function (app) {
   app.route('/api/threads/:board')
   
     .get(function (req, res){
+      let board = req.params.board
+      MongoClient.connect(CONNECTION_STRING, function(err, db) {
+        let collection = db.collection(board);
+        let projection = {
+          text: true,
+          delete_password: false,
+          created_on: true,
+          bumped_on: true,
+          reported: false,
+          replies: true
+        }
+        collection.find({}, projection, (err,data) =>{
+          res.json(data)
+        })
+      })
 
     })
 
@@ -31,7 +46,7 @@ module.exports = function (app) {
         created_on: new Date(),
         bumped_on: new Date(),
         reported: false,
-        replies: [],
+        replies: []
       };
     if(!post.text || !post.delete_password) {
         res.send('missing inputs');
