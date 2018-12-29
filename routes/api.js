@@ -32,8 +32,8 @@ module.exports = function (app) {
           reported: false,
           replies: true
         }
-        collection.find({}, fields: pr).toArray((err,data) =>{
-          console.log(data)
+        collection.find({}, {projection: {'"text"':0}}).toArray((err,data) =>{
+          console.log(err, data)
           res.json(data)
         })
       })
