@@ -20,6 +20,7 @@ module.exports = function (app) {
   app.route('/api/threads/:board')
   
     .get(function (req, res){
+    
       let board = req.params.board
       MongoClient.connect(CONNECTION_STRING, function(err, db) {
         let collection = db.collection(board);
@@ -31,7 +32,8 @@ module.exports = function (app) {
           reported: false,
           replies: true
         }
-        collection.find({}, projection, (err,data) =>{
+        collection.find({}, fields: pr).toArray((err,data) =>{
+          console.log(data)
           res.json(data)
         })
       })
@@ -39,28 +41,28 @@ module.exports = function (app) {
     })
 
     .post(function (req, res){
-    let board = req.params.board
-    let post = {
-        text: req.body.text,
-        delete_password: req.body.delete_password,
-        created_on: new Date(),
-        bumped_on: new Date(),
-        reported: false,
-        replies: []
-      };
-    if(!post.text || !post.delete_password) {
-        res.send('missing inputs');
-      } else{
-        MongoClient.connect(CONNECTION_STRING, function(err, db) {
-          let collection = db.collection(board);
-          collection.insertOne(post, (err, data) =>{
-            post._id = data.insertedId;
-            res.redirect('/b/' + board)
+      let board = req.params.board
+      let post = {
+          text: req.body.text,
+          delete_password: req.body.delete_password,
+          created_on: new Date(),
+          bumped_on: new Date(),
+          reported: false,
+          replies: []
+        };
+      if(!post.text || !post.delete_password) {
+          res.send('missing inputs');
+        } else{
+          MongoClient.connect(CONNECTION_STRING, function(err, db) {
+            let collection = db.collection(board);
+            collection.insertOne(post, (err, data) =>{
+              post._id = data.insertedId;
+              res.redirect('/b/' + board)
+            })
           })
-        })
-      }
+        }
 
-    })
+      })
 
     .put(function (req, res){
 
