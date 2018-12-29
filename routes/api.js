@@ -29,7 +29,7 @@ module.exports = function (app) {
           reported: false
         }
         collection.find({}, {limit: 10, fields: projection, sort: {bumped_on:1}}).toArray((err,data) =>{
-          console.log(err, data)
+          //console.log(err, data)
           data.forEach((record) => {
             record.replies = record.replies.slice(0,3)
           })
@@ -79,7 +79,27 @@ module.exports = function (app) {
 
     .post(function (req, res){
     //Sort the array by date on write in
-
+      let board = req.params.board
+      let thread_id = req.body.thread_id
+      let reply = {
+          _id: new ObjectId(),
+          text: req.body.text,
+          delete_password: req.body.delete_password,
+          created_on: new Date(),
+          reported: false
+        };
+        if(!reply.text || !reply.delete_password) {
+          res.send('missing inputs');
+        } else{
+          MongoClient.connect(CONNECTION_STRING, function(err, db) {
+            let collection = db.collection(board);
+            collection.findOne({_id:thread_id}, (err, data) =>{
+              post._id = data.insertedId;
+              res.redirect('/b/' + board)
+            })
+          })
+        }
+    
     })
 
     .put(function (req, res){
