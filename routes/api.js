@@ -24,7 +24,7 @@ module.exports = function (app) {
     })
 
     .post(function (req, res){
-    let board = req.params.project
+    let board = req.params.board
     let post = {
         text: req.body.text,
         delete_password: req.body.delete_password,
@@ -40,9 +40,7 @@ module.exports = function (app) {
           let collection = db.collection(board);
           collection.insertOne(post, (err, data) =>{
             post._id = data.insertedId;
-            let redirect = '/b/' + board
-            console.log(redirect)
-            res.redirect(redirect)
+            res.redirect('/b/' + board)
           })
         })
       }
