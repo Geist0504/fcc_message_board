@@ -25,14 +25,10 @@ module.exports = function (app) {
       MongoClient.connect(CONNECTION_STRING, function(err, db) {
         let collection = db.collection(board);
         let projection = {
-          text: true,
           delete_password: false,
-          created_on: true,
-          bumped_on: true,
-          reported: false,
-          replies: true
+          reported: false
         }
-        collection.find({}, {projection: {'"text"':0}}).toArray((err,data) =>{
+        collection.find({}, {fields: projection, sort: {}).toArray((err,data) =>{
           console.log(err, data)
           res.json(data)
         })
