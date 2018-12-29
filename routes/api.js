@@ -94,8 +94,7 @@ module.exports = function (app) {
           MongoClient.connect(CONNECTION_STRING, function(err, db) {
             let collection = db.collection(board);
             collection.findOne({_id:thread_id}, (err, data) =>{
-              post._id = data.insertedId;
-              res.redirect('/b/' + board)
+              
             })
           })
         }
