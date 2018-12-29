@@ -30,7 +30,9 @@ module.exports = function (app) {
         }
         collection.find({}, {limit: 10, fields: projection, sort: {bumped_on:1}}).toArray((err,data) =>{
           console.log(err, data)
-          //likely want a data.forEach loop to modify length of replies array in place. Weird requirement
+          data.forEach((record) => {
+            record.replies = record.replies.slice(0,3)
+          })
           res.json(data)
         })
       })
