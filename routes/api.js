@@ -12,7 +12,8 @@ var expect = require('chai').expect;
 
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
-const MONGODB_CONNECTION_STRING = process.env.DB;
+const CONNECTION_STRING = process.env.DB;
+let db;
 
 module.exports = function (app) {
   
@@ -23,6 +24,28 @@ module.exports = function (app) {
     })
 
     .post(function (req, res){
+    let board = req.params.project
+    let post = {
+        text: req.body.text,
+        delete_password: req.body.delete_password,
+        created_on: new Date(),
+        bumped_on: new Date(),
+        reported: false,
+        replies: [],
+      };
+    if(!post.text || !post.delete_password) {
+        res.send('missing inputs');
+      } else{
+        MongoClient.connect(CONNECTION_STRING, function(err, db) {
+          let collection = db.collection(board);
+          collection.insertOne(post, (err, data) =>{
+            post._id = data.insertedId;
+            let redirect = '/b/' + board
+            console.log(redirect)
+            res.redirect(redirect)
+          })
+        })
+      }
 
     })
 
