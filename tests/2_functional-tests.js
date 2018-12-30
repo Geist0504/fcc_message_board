@@ -104,7 +104,7 @@ suite('Functional Tests', function() {
           .send({
             thread_id: '5c27c92bd1017f2bb15bb591',
             text: 'This is my test comment',
-            delete_password: 'delete'
+            delete_password: delete_password
           })
           .end(function(err, res){
             assert.equal(res.status, 200);
@@ -164,17 +164,21 @@ suite('Functional Tests', function() {
     });
     
     suite('DELETE', function() {
-      chai.request(server)
-        .delete('/api/replies/' +  test_board)
-        .send({
-          thread_id: new ObjectId('5c27c92bd1017f2bb15bb591'),
-          reply_id: test_reply
+      test('Put request to reply', function(done) {
+        chai.request(server)
+          .delete('/api/replies/' +  test_board)
+          .send({
+            thread_id: new ObjectId('5c27c92bd1017f2bb15bb591'),
+            reply_id: test_reply,
+            delete_password: delete_password
+          })
+          .end(function(err, res){
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'success');
+            done();
+          })
         })
-        .end(function(err, res){
-        
-      
-    });
-    
+    })
   });
 
 });
