@@ -62,7 +62,21 @@ module.exports = function (app) {
       })
 
     .put(function (req, res){
-      let board = req.params.board
+    let board = req.params.board
+    let thread_id = req.body.thread_id
+    if(!thread_id) {
+          res.send('missing inputs or invalid Id');
+        } else{
+          MongoClient.connect(CONNECTION_STRING, function(err, db) {
+            let collection = db.collection(board);
+            let query = {
+              _id: new ObjectId(thread_id),
+            }
+            collection.findOneAndDelete(query, (err, data) =>{
+              data.value ? res.send('success') : res.send('incorrect password')
+            })
+          })
+        }
 
     })
 
