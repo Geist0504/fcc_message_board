@@ -154,8 +154,9 @@ module.exports = function (app) {
               let collection = db.collection(board);
               let query = {
                 _id: new ObjectId(thread_id),
+                'replies._id': new ObjectId(reply_id)
               }
-              collection.findOneAndUpdate(query, {$set: {reported: true}}, (err, data) =>{
+              collection.findOneAndUpdate(query, {$set: {"replies.$.reported": true}}, (err, data) =>{
                 data.value ? res.send('success') : res.send('incorrect id')
               })
             })
@@ -165,6 +166,24 @@ module.exports = function (app) {
 
     .delete(function (req, res){
     let board = req.params.board
+    let thread_id = req.body.thread_id
+    let reply_id = req.body.reply_id
+    let delete_password = req.body.delete_password
+    if(!thread_id || !delete_password || !ObjectId.isValid(thread_id)) {
+          res.send('missing inputs or invalid Id');
+        } else{
+          MongoClient.connect(CONNECTION_STRING, function(err, db) {
+            let collection = db.collection(board);
+            let query = {
+              _id: new ObjectId(thread_id),
+              reply_id: new ObjectId(reply_id),
+              delete_password: delete_password
+            }
+            collection.findOneAndDelete(query, (err, data) =>{
+              data.value ? res.send('success') : res.send('incorrect password')
+            })
+          })
+        }
 
     })
 
