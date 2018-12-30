@@ -65,8 +65,12 @@ suite('Functional Tests', function() {
           })
           .end(function(err, res){
             assert.equal(res.status, 200);
-          console.log(res.body)
-            assert.equal(res.body.text, 'Test')
+            assert.equal(res.body.text, 'This is my test post')
+            assert.property(res.body, 'replies')
+            assert.property(res.body, 'created_on')
+            assert.property(res.body, 'bumped_on')
+            assert.notProperty(res.body, 'delete_password')
+            assert.notProperty(res.body, 'reported')
             done();
           });
       })

@@ -66,6 +66,24 @@ module.exports = function (app) {
     })
 
     .delete(function (req, res){
+    let board = req.params.board
+    let thread_id = req.body.thread_id
+    let delete_password = req.body.delete_password
+    if(!thread_id || !delete_password) {
+          res.send('missing inputs');
+        } else{
+          MongoClient.connect(CONNECTION_STRING, function(err, db) {
+            let collection = db.collection(board);
+            let query = {
+              _id: new ObjectId(thread_id),
+              delete_password: delete_password
+            }
+            collection.findOneAndDelete(query, (err, data) =>{
+              console.log(err, data)
+              res.redirect('/b/' + board)
+            })
+          })
+        }
 
     })
     
@@ -116,6 +134,7 @@ module.exports = function (app) {
     })
 
     .delete(function (req, res){
+    let board = req.params.board
 
     })
 
