@@ -21,17 +21,15 @@ module.exports = function (app) {
   
     .get(function (req, res){
       let board = req.params.board
-      console.log(board)
       MongoClient.connect(CONNECTION_STRING, function(err, db) {
         let collection = db.collection(board);
         let projection = {
           delete_password: false,
           reported: false
         }
-        collection.find({}, {limit: 10, fields: projection, sort: {bumped_on:1}}).toArray((err,data) =>{
-          console.log(data)
+        collection.find({}, {limit: 10, fields: projection, sort: {bumped_on:-1}}).toArray((err,data) =>{
           data.forEach((record) => {
-            if(record.replies != undefined &&  record.replies.length >? 2){
+            if(record.replies != undefined &&  record.replies.length > 2){
               record.replies = record.replies.slice(0,2)
             }
             
