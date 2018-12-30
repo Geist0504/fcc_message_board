@@ -38,13 +38,15 @@ suite('Functional Tests', function() {
       
     });
     
+    suite('PUT', function() {
+      
+    });
+    
     suite('DELETE', function() {
       
     });
     
-    suite('PUT', function() {
-      
-    });
+    
     
 
   });
@@ -52,7 +54,19 @@ suite('Functional Tests', function() {
   suite('API ROUTING FOR /api/replies/:board', function() {
     
     suite('POST', function() {
-      
+      test('Reply - Every field filled in', function(done) {
+        chai.request(server)
+          .post('/api/replies/' +  test_board)
+          .send({
+            text: 'This is my test comment',
+            delete_password: 'delete'
+          })
+          .end(function(err, res){
+            assert.equal(res.status, 200);
+            assert.equal(res.redirects[0].substring(res.redirects[0].length -7), '/b/test')
+            done();
+          });
+      })   
     });
     
     suite('GET', function() {

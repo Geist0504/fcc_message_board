@@ -176,10 +176,10 @@ module.exports = function (app) {
             let collection = db.collection(board);
             let query = {
               _id: new ObjectId(thread_id),
-              reply_id: new ObjectId(reply_id),
-              delete_password: delete_password
+              'replies._id': new ObjectId(reply_id),
+              'replies.delete_password': delete_password
             }
-            collection.findOneAndDelete(query, (err, data) =>{
+            collection.findOneAndUpdate(query, {$set: {"replies.$.text": 'deleted'}}, (err, data) =>{
               data.value ? res.send('success') : res.send('incorrect password')
             })
           })
