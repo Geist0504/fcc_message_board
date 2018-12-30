@@ -21,9 +21,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet.frameguard({ action: 'deny' }));
 app.use(helmet.frameguard({ action: 'deny' }));
 app.use(helmet.dnsPrefetchControl());
-app.use(helmet.contentSecurityPolicy({ directives: 
-                                      {defaultSrc: ["'self'"],
-                                      styleSrc: ["'self'"] }}));
 
 //Sample front-end
 app.route('/b/:board/')

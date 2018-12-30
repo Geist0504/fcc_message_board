@@ -20,7 +20,6 @@ module.exports = function (app) {
   app.route('/api/threads/:board')
   
     .get(function (req, res){
-    
       let board = req.params.board
       MongoClient.connect(CONNECTION_STRING, function(err, db) {
         let collection = db.collection(board);
@@ -29,7 +28,6 @@ module.exports = function (app) {
           reported: false
         }
         collection.find({}, {limit: 10, fields: projection, sort: {bumped_on:1}}).toArray((err,data) =>{
-          //console.log(err, data)
           data.forEach((record) => {
             record.replies = record.replies.slice(0,2)
             
@@ -56,7 +54,6 @@ module.exports = function (app) {
           MongoClient.connect(CONNECTION_STRING, function(err, db) {
             let collection = db.collection(board);
             collection.insertOne(post, (err, data) =>{
-              post._id = data.insertedId;
               res.redirect('/b/' + board)
             })
           })
@@ -75,6 +72,19 @@ module.exports = function (app) {
   app.route('/api/replies/:board')
   
     .get(function (req, res){
+      let board = req.params.board
+      let thread_id = req.query.thread_id
+      MongoClient.connect(CONNECTION_STRING, function(err, db) {
+        let collection = db.collection(board);
+        let projection = {
+          delete_password: false,
+          reported: false
+        }
+        collection.findOne({_id: thread_id}, {fields: projection}, (err,data) =>{
+          console.log(data)
+          res.json(data)
+        })
+      })
 
     })
 
@@ -94,9 +104,7 @@ module.exports = function (app) {
         } else{
           MongoClient.connect(CONNECTION_STRING, function(err, db) {
             let collection = db.collection(board);
-            //
             collection.findOneAndUpdate({_id:new ObjectId(thread_id)}, {$push: {replies: {$each:[reply], $position:0}}, $set:{bumped_on:reply.created_on}}, {returnOriginal: false}, (err, data) =>{
-              console.log(err, data)
               res.redirect('/b/'+board+'/'+thread_id)
             })
           })
