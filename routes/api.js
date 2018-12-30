@@ -54,7 +54,7 @@ module.exports = function (app) {
           MongoClient.connect(CONNECTION_STRING, function(err, db) {
             let collection = db.collection(board);
             collection.insertOne(post, (err, data) =>{
-              res.redirect('/b/' + board)
+              res.redirect('/b/' + board + '/' + data.insertedId)
             })
           })
         }
@@ -69,8 +69,8 @@ module.exports = function (app) {
     let board = req.params.board
     let thread_id = req.body.thread_id
     let delete_password = req.body.delete_password
-    if(!thread_id || !delete_password) {
-          res.send('missing inputs');
+    if(!thread_id || !delete_password || !ObjectId.isValid(thread_id)) {
+          res.send('missing inputs or invalid Id');
         } else{
           MongoClient.connect(CONNECTION_STRING, function(err, db) {
             let collection = db.collection(board);
@@ -79,8 +79,7 @@ module.exports = function (app) {
               delete_password: delete_password
             }
             collection.findOneAndDelete(query, (err, data) =>{
-              console.log(err, data)
-              res.redirect('/b/' + board)
+              data.value ? res.send('success') : res.send('incorrect password')
             })
           })
         }
