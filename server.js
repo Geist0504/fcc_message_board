@@ -19,8 +19,7 @@ app.use(cors({origin: '*'})); //For FCC testing purposes only
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet.frameguard({ action: 'deny' }));
-app.use(helmet.frameguard({ action: 'deny' }));
-app.use(helmet.dnsPrefetchControl());
+//app.use(helmet.dnsPrefetchControl());
 
 //Sample front-end
 app.route('/b/:board/')

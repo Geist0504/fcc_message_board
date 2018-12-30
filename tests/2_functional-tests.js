@@ -59,14 +59,14 @@ suite('Functional Tests', function() {
       //5c27c92bd1017f2bb15bb591
       test('One thread every field filled in', function(done) {
         chai.request(server)
-          .get('/api/threads/' +  test_board)
-          .send({
-            id: 'This is my test post',
-            delete_password: 'delete'
+          .get('/api/replies/' +  test_board)
+          .query({
+            thread_id: '5c27c92bd1017f2bb15bb591',
           })
           .end(function(err, res){
             assert.equal(res.status, 200);
-            assert.equal(res.redirects[0].substring(res.redirects[0].length -7), '/b/test')
+          console.log(res.body)
+            assert.equal(res.body.text, 'Test')
             done();
           });
       })

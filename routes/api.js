@@ -80,8 +80,7 @@ module.exports = function (app) {
           delete_password: false,
           reported: false
         }
-        collection.findOne({_id: thread_id}, {fields: projection}, (err,data) =>{
-          console.log(data)
+        collection.findOne({_id: new ObjectId(thread_id)}, {fields: projection}, (err,data) =>{
           res.json(data)
         })
       })
