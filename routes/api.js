@@ -31,7 +31,8 @@ module.exports = function (app) {
         collection.find({}, {limit: 10, fields: projection, sort: {bumped_on:1}}).toArray((err,data) =>{
           //console.log(err, data)
           data.forEach((record) => {
-            record.replies = record.replies.slice(0,3)
+            record.replies = record.replies.slice(0,2)
+            
           })
           res.json(data)
         })
@@ -93,8 +94,9 @@ module.exports = function (app) {
         } else{
           MongoClient.connect(CONNECTION_STRING, function(err, db) {
             let collection = db.collection(board);
-            collection.findOne({_id:thread_id}, (err, data) =>{
-              
+            collection.findOneAndUpdate({_id:thread_id}, {$push:{replies: reply}, $set:{pushbumped_on:reply.created_on}}, {returnOriginal: false}, (err, data) =>{
+              console.log(data)
+              res.redirect('/b/'+board+'/'+thread_id)
             })
           })
         }
