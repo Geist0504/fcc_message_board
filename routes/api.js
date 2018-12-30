@@ -94,8 +94,9 @@ module.exports = function (app) {
         } else{
           MongoClient.connect(CONNECTION_STRING, function(err, db) {
             let collection = db.collection(board);
-            collection.findOneAndUpdate({_id:thread_id}, {$push:{replies: reply}, $set:{pushbumped_on:reply.created_on}}, {returnOriginal: false}, (err, data) =>{
-              console.log(data)
+            //$push: {replies: reply},
+            collection.findOneAndUpdate({_id:new ObjectId(thread_id)}, {$set:{'replies.-1':reply, bumped_on:reply.created_on}}, {returnOriginal: false}, (err, data) =>{
+              console.log(err, data)
               res.redirect('/b/'+board+'/'+thread_id)
             })
           })
