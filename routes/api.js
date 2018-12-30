@@ -29,8 +29,11 @@ module.exports = function (app) {
           reported: false
         }
         collection.find({}, {limit: 10, fields: projection, sort: {bumped_on:1}}).toArray((err,data) =>{
+          console.log(data)
           data.forEach((record) => {
-            record.replies = record.replies.slice(0,2)
+            if(record.replies != undefined &&  record.replies.length >? 2){
+              record.replies = record.replies.slice(0,2)
+            }
             
           })
           res.json(data)
