@@ -11,6 +11,7 @@ var chai = require('chai');
 var assert = chai.assert;
 var server = require('../server');
 let test_board = 'test'
+var ObjectId = require('mongodb').ObjectId;
 
 chai.use(chaiHttp);
 
@@ -28,13 +29,23 @@ suite('Functional Tests', function() {
           })
           .end(function(err, res){
             assert.equal(res.status, 200);
-            assert.equal(res.redirects[0].substring(res.redirects[0].length -7), '/b/test')
+            assert.equal(ObjectId.isValid(res.redirects[0].substring(res.redirects[0].length -24)), true)
             done();
           });
       })
     });
     
     suite('GET', function() {
+      test('Generic get request to board', function(done) {
+        chai.request(server)
+          .get('/api/threads/' +  test_board)
+          .send({})
+          .end(function(err, res){
+            assert.equal(res.status, 200);
+            console.log(res.body)
+            done();
+          });
+      })
       
     });
     
@@ -64,7 +75,6 @@ suite('Functional Tests', function() {
           })
           .end(function(err, res){
             assert.equal(res.status, 200);
-          console.log(res.redirects)
             assert.equal(res.redirects[0].substring(res.redirects[0].length -7), '15bb591')
             done();
           });

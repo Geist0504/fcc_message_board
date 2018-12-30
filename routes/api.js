@@ -21,6 +21,7 @@ module.exports = function (app) {
   
     .get(function (req, res){
       let board = req.params.board
+      console.log(board)
       MongoClient.connect(CONNECTION_STRING, function(err, db) {
         let collection = db.collection(board);
         let projection = {
