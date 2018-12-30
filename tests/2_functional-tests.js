@@ -58,12 +58,14 @@ suite('Functional Tests', function() {
         chai.request(server)
           .post('/api/replies/' +  test_board)
           .send({
+            thread_id: '5c27c92bd1017f2bb15bb591',
             text: 'This is my test comment',
             delete_password: 'delete'
           })
           .end(function(err, res){
             assert.equal(res.status, 200);
-            assert.equal(res.redirects[0].substring(res.redirects[0].length -7), '/b/test')
+          console.log(res.redirects)
+            assert.equal(res.redirects[0].substring(res.redirects[0].length -7), '15bb591')
             done();
           });
       })   
