@@ -14,6 +14,8 @@ let test_board = 'test'
 var ObjectId = require('mongodb').ObjectId;
 
 let test_post;
+let test_reply;
+let delete_password = 'delete'
 
 chai.use(chaiHttp);
 
@@ -27,7 +29,7 @@ suite('Functional Tests', function() {
           .post('/api/threads/' +  test_board)
           .send({
             text: 'This is my test post',
-            delete_password: 'delete'
+            delete_password: delete_password
           })
           .end(function(err, res){
             assert.equal(res.status, 200);
@@ -73,10 +75,13 @@ suite('Functional Tests', function() {
     });
     
     suite('DELETE', function() {
-      test('Delete request to board', function(done) {
+      test('Delete thread board', function(done) {
         chai.request(server)
           .delete('/api/threads/' +  test_board)
-          .send({thread_id: test_post})
+          .send({
+            thread_id: test_post,
+            delete_password: delete_password
+          })
           .end(function(err, res){
             assert.equal(res.status, 200);
             assert.equal(res.text, 'success')
@@ -121,6 +126,8 @@ suite('Functional Tests', function() {
             assert.equal(res.status, 200);
             assert.equal(res.body.text, 'This is my test post')
             assert.property(res.body, 'replies')
+            test_reply = new ObjectId(res.body.replies[0]._id)
+          console.log(test_reply)
             assert.property(res.body, 'created_on')
             assert.property(res.body, 'bumped_on')
             assert.notProperty(res.body, 'delete_password')
@@ -132,10 +139,39 @@ suite('Functional Tests', function() {
     });
     
     suite('PUT', function() {
+      test('Put request to reply', function(done) {
+        chai.request(server)
+          .put('/api/replies/' +  test_board)
+          .send({
+            thread_id: new ObjectId('5c27c92bd1017f2bb15bb591'),
+            reply_id: test_reply
+          })
+          .end(function(err, res){
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'success')
+            chai.request(server)
+              .get('/api/replies/' + test_board)
+              .query({
+                thread_id: '5c27c92bd1017f2bb15bb591',
+              })
+              .end(function(error, response){
+                assert.equal(response.body.replies[0].reported, true)
+              })
+            done();
+          });
+      })
       
     });
     
     suite('DELETE', function() {
+      chai.request(server)
+        .delete('/api/replies/' +  test_board)
+        .send({
+          thread_id: new ObjectId('5c27c92bd1017f2bb15bb591'),
+          reply_id: test_reply
+        })
+        .end(function(err, res){
+        
       
     });
     
