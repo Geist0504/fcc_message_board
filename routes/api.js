@@ -62,6 +62,7 @@ module.exports = function (app) {
       })
 
     .put(function (req, res){
+      let board = req.params.board
 
     })
 
