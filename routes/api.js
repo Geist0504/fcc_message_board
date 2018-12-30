@@ -64,7 +64,7 @@ module.exports = function (app) {
     .put(function (req, res){
     let board = req.params.board
     let thread_id = req.body.thread_id
-    if(!thread_id) {
+    if(!thread_id || !ObjectId.isValid(thread_id)) {
           res.send('missing inputs or invalid Id');
         } else{
           MongoClient.connect(CONNECTION_STRING, function(err, db) {
@@ -72,8 +72,8 @@ module.exports = function (app) {
             let query = {
               _id: new ObjectId(thread_id),
             }
-            collection.findOneAndDelete(query, (err, data) =>{
-              data.value ? res.send('success') : res.send('incorrect password')
+            collection.findOneAndUpdate(query, {$set: {reported: true}}, (err, data) =>{
+              data.value ? res.send('success') : res.send('incorrect id')
             })
           })
         }
@@ -144,6 +144,22 @@ module.exports = function (app) {
     })
 
     .put(function (req, res){
+      let board = req.params.board
+      let thread_id = req.body.thread_id
+      let reply_id = req.body.reply_id
+      if(!thread_id || !ObjectId.isValid(thread_id)) {
+            res.send('missing inputs or invalid Id');
+          } else{
+            MongoClient.connect(CONNECTION_STRING, function(err, db) {
+              let collection = db.collection(board);
+              let query = {
+                _id: new ObjectId(thread_id),
+              }
+              collection.findOneAndUpdate(query, {$set: {reported: true}}, (err, data) =>{
+                data.value ? res.send('success') : res.send('incorrect id')
+              })
+            })
+          }
 
     })
 
